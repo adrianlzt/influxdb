@@ -10,6 +10,8 @@
 - [#4125](https://github.com/influxdata/influxdb/pull/4125): Admin UI: Fetch and display server version on connect. Thanks @alexiri!
 - [#5602](https://github.com/influxdata/influxdb/pull/5602): Simplify cluster startup for scripting and deployment
 - [#5666](https://github.com/influxdata/influxdb/pull/5666): Manage dependencies with gdm
+- [#5706](https://github.com/influxdata/influxdb/pull/5706): Cluster setup
+cleanup
 
 ### Bugfixes
 
