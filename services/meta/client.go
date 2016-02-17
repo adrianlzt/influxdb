@@ -813,6 +813,9 @@ func (c *Client) JoinMetaServer(httpAddr, tcpAddr string) error {
 			c.mu.RLock()
 
 			if currentServer >= len(c.metaServers) {
+				// We've tried every server, wait a second before
+				// trying again
+				time.Sleep(time.Second)
 				currentServer = 0
 			}
 			server := c.metaServers[currentServer]
@@ -1013,6 +1016,10 @@ func (c *Client) retryUntilExec(typ internal.Command_Type, desc *proto.Extension
 			continue
 		}
 
+		if _, ok := err.(errCommand); ok {
+			return err
+		}
+
 		time.Sleep(errSleep)
 	}
 }
@@ -1054,7 +1061,7 @@ func (c *Client) exec(url string, typ internal.Command_Type, desc *proto.Extensi
 	}
 	es := res.GetError()
 	if es != "" {
-		return 0, fmt.Errorf(es)
+		return 0, errCommand{msg: es}
 	}
 
 	return res.GetIndex(), nil
@@ -1249,6 +1256,14 @@ type errRedirect struct {
 
 func (e errRedirect) Error() string {
 	return fmt.Sprintf("redirect to %s", e.host)
+}
+
+type errCommand struct {
+	msg string
+}
+
+func (e errCommand) Error() string {
+	return e.msg
 }
 
 type uint64Slice []uint64
